@@ -1,0 +1,125 @@
+:root {
+  --bg: #0b1220;
+  --card: #111a2e;
+  --muted: rgba(255, 255, 255, 0.7);
+  --text: rgba(255, 255, 255, 0.92);
+  --line: rgba(255, 255, 255, 0.12);
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.authPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: radial-gradient(1200px 600px at 10% 10%, #17244a, transparent),
+    radial-gradient(900px 500px at 80% 20%, #1a3b4b, transparent), var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.authCard {
+  width: min(500px, 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.03)
+  );
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.authHeader {
+  padding: 6px 6px 10px;
+}
+
+.authTitle {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+
+.authSubtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.authError {
+  margin: 10px 6px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  background: rgba(239, 68, 68, 0.18);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.authForm {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 6px;
+}
+
+.authLabel {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.authInput {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  outline: none;
+}
+
+.authInput:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.authBtnPrimary {
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.6);
+  background: rgba(59, 130, 246, 0.35);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.05s ease, background 0.15s ease;
+}
+
+.authBtnPrimary:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+.authBtnPrimary:active {
+  transform: translateY(1px);
+}
+
+.authBtnPrimary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.authFooter {
+  margin-top: 10px;
+  padding: 6px;
+}
+
+.authMuted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.authLink {
+  color: rgba(147, 197, 253, 0.95);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
