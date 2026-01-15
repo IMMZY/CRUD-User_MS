@@ -95,6 +95,10 @@ npm start
 http://localhost:3000
 ```
 
+![front-end_Login_page](image.png)
+![front-end_Home_page](image-1.png)
+![front-end_AddUser_page](image-2.png)
+
 ### Backend Setup (Server)
 
 1. Open a terminal and go into the backend folder:
@@ -135,3 +139,6 @@ http://localhost:5000
 ```bash
 npm run dev
 ```
+
+![back-end_CRUD_User_MS_Queries](image-3.png)
+![back-end_CRUD_User_MS_User table](image-4.png)
