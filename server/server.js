@@ -10,6 +10,9 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+const path = require("path");
+app.use(express.static(path.join(__dirname, "../client/build")));
+
 // MySQL connection
 const db = mysql.createConnection({
   host: process.env.DB_HOST || "127.0.0.1",
@@ -122,6 +125,10 @@ app.delete("/users/:id", (req, res) => {
     }
     res.json({ message: "User deleted successfully" });
   });
+});
+
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
 // Start server
