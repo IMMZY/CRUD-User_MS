@@ -1,3 +1,4 @@
+// Deployed via automated CI/CD pipeline
 // server.js
 require("dotenv").config();
 const express = require("express");
