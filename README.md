@@ -184,3 +184,11 @@ Terraform (above) creates an IAM user named `github-actions-crud-ms`, scoped to 
    - `AWS_SECRET_ACCESS_KEY`
 
 After that, every push to `main` deploys automatically.
+
+---
+
+## Known Limitations / Future Improvements
+
+- **No "forgot password" flow** — users who lose their password currently have no way to reset it. Would require a password-reset token flow (e.g. emailed link) and an email-sending service.
+- **HTTP only, no HTTPS** on the load balancer — acceptable for this learning/demo deployment, but a production setup should add an SSL certificate (via AWS Certificate Manager) and a Route 53 domain.
+- **ECS tasks run in public subnets** (with a security group restricting access) rather than private subnets behind a NAT Gateway, to avoid NAT Gateway cost/complexity for this project.

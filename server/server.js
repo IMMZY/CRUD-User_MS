@@ -4,6 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -14,8 +15,8 @@ app.use(express.json());
 const path = require("path");
 app.use(express.static(path.join(__dirname, "../client/build")));
 
-// MySQL connection
-const db = mysql.createConnection({
+// MySQL connection pool (auto-reconnects, unlike a single connection)
+const db = mysql.createPool({
   host: process.env.DB_HOST || "127.0.0.1",
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || "root",
@@ -24,7 +25,7 @@ const db = mysql.createConnection({
 });
 
 // Test DB connection
-db.connect((err) => {
+db.query("SELECT 1", (err) => {
   if (err) {
     console.error("DB connection failed:", err.message);
   } else {
@@ -39,18 +40,23 @@ app.get("/", (req, res) => {
 
 /************************************************************** */
 // Sign Up
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
   const { name, email, phone, password } = req.body;
 
   if (!name || !email || !phone || !password)
     return res.status(400).json({ error: "All fields are required" });
 
-  const sql =
-    "INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)";
-  db.query(sql, [name, email, phone, password], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: "Sign up successful", userId: result.insertId });
-  });
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const sql =
+      "INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)";
+    db.query(sql, [name, email, phone, hashedPassword], (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: "Sign up successful", userId: result.insertId });
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Login
@@ -60,32 +66,42 @@ app.post("/login", (req, res) => {
   if (!email || !password)
     return res.status(400).json({ error: "Email and password required" });
 
-  const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
-  db.query(sql, [email, password], (err, result) => {
+  const sql = "SELECT * FROM users WHERE email = ?";
+  db.query(sql, [email], async (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     if (result.length === 0)
       return res.status(401).json({ error: "Invalid credentials" });
-    res.json({ message: "Login successful", user: result[0] });
+
+    const user = result[0];
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ error: "Invalid credentials" });
+
+    res.json({ message: "Login successful", user });
   });
 });
 /************************************************************** */
 
 // Add new user
-app.post("/users", (req, res) => {
+app.post("/users", async (req, res) => {
   const { name, email, phone, password } = req.body;
 
   if (!name || !email || !phone || !password) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  const sql =
-    "INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)";
-  db.query(sql, [name, email, phone, password], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json({ id: result.insertId, name, email, phone, password });
-  });
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const sql =
+      "INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)";
+    db.query(sql, [name, email, phone, hashedPassword], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ id: result.insertId, name, email, phone });
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get user
@@ -99,19 +115,24 @@ app.get("/users", (req, res) => {
 });
 
 // Update user by id
-app.put("/users/:id", (req, res) => {
+app.put("/users/:id", async (req, res) => {
   const { id } = req.params;
   const { name, email, phone, password } = req.body;
 
-  const sql =
-    "UPDATE users SET name = ?, email = ?, phone = ?, password = ? WHERE id = ?";
-  db.query(sql, [name, email, phone, password, id], (err, result) => {
-    if (err) {
-      console.error("Error updating user:", err);
-      return res.status(500).json({ error: err.message });
-    }
-    res.json({ message: "User updated successfully" });
-  });
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const sql =
+      "UPDATE users SET name = ?, email = ?, phone = ?, password = ? WHERE id = ?";
+    db.query(sql, [name, email, phone, hashedPassword, id], (err, result) => {
+      if (err) {
+        console.error("Error updating user:", err);
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: "User updated successfully" });
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Delete user
