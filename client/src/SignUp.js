@@ -114,7 +114,7 @@ function SignUp() {
     setErrorMsg("");
 
     try {
-      const res = await fetch("http://localhost:5000/signup", {
+      const res = await fetch("/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -130,7 +130,7 @@ function SignUp() {
       // Save user (use backend user object if available)
       localStorage.setItem(
         "loggedInUser",
-        JSON.stringify(data.user ?? { id: data.userId, ...form })
+        JSON.stringify(data.user ?? { id: data.userId, ...form }),
       );
 
       navigate("/home");

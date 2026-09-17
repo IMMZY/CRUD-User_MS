@@ -165,7 +165,7 @@ function Home() {
   });
 
   const fetchUsers = () => {
-    fetch("http://localhost:5000/users")
+    fetch("/users")
       .then((res) => res.json())
       .then((data) => setUsers(Array.isArray(data) ? data : []))
       .catch((err) => console.error(err));
@@ -190,7 +190,7 @@ function Home() {
   const handleDelete = (id) => {
     if (!window.confirm("Delete this user?")) return;
 
-    fetch(`http://localhost:5000/users/${id}`, { method: "DELETE" })
+    fetch(`/users/${id}`, { method: "DELETE" })
       .then((res) => res.json())
       .then(() => setUsers((prev) => prev.filter((u) => u.id !== id)))
       .catch((err) => console.error(err));
@@ -214,7 +214,7 @@ function Home() {
   const handleUpdate = (e) => {
     e.preventDefault();
 
-    fetch(`http://localhost:5000/users/${editingUser}`, {
+    fetch(`/users/${editingUser}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -222,7 +222,7 @@ function Home() {
       .then((res) => res.json())
       .then((updatedUser) => {
         setUsers((prev) =>
-          prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+          prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)),
         );
         cancelEdit();
       })
