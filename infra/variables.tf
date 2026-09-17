@@ -23,3 +23,21 @@ variable "azs" {
   type    = list(string)
   default = ["us-east-1a", "us-east-1b"]
 }
+
+variable "db_username" {
+  description = "Master username for RDS"
+  type        = string
+  default     = "admin"
+}
+
+variable "db_password" {
+  description = "Master password for RDS"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_name" {
+  description = "Initial database name"
+  type        = string
+  default     = "user_management_db"
+}
